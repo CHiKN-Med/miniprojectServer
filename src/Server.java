@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
-
 import javax.xml.soap.Text;
 
 public class Server extends Application {
