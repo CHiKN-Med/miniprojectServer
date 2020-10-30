@@ -23,13 +23,31 @@ public class Server {
     public static void main(String[] args) {
         Server server = new Server();
         server.initiateServer();
+
     }
+
 
 
     public void initiateServer() {
         try {
             // Create a server socket
             serverSocket = new ServerSocket(port);
+
+            new Thread(() -> {
+                while (true){
+                    try {
+                        // System.out.println(allDone());
+                        if(allDone()){
+                            checkWinner();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
 
             System.out.println("Server started at " + new Date() + "\n");
             while (true) {
@@ -41,6 +59,7 @@ public class Server {
                 user.start();
                 // ta.appendText("\n" + users.size());
                 //});
+
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -53,10 +72,10 @@ public class Server {
         }
     }
 
-    public void checkWinner() throws IOException {
-        String username = "";
+    public void checkWinner() throws IOException, InterruptedException {
+        String username = null;
         int highscore = 0;
-        String scoreboard = null;
+        String scoreboard = "";
         for (int i = 0; i < users.size(); i++) {
             scoreboard+="\n" + users.get(i).getUserName() + ": " + users.get(i).getScore();
             if(users.get(i).getScore() > highscore){
@@ -67,6 +86,8 @@ public class Server {
         sendAll(username);
         sendAll(scoreboard);
     }
+
+
 
 
     public void score() {
@@ -95,7 +116,7 @@ public class Server {
 
 
 
-    public boolean allDone(){
+    public boolean allDone() throws IOException, InterruptedException {
         boolean done = true;
         for(int i = 0; i<users.size(); i++){
             if(!users.get(i).done){
@@ -216,12 +237,13 @@ class UserThread extends Thread{
                 }
             }
 
-            server.checkWinner();
+
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
 
 
@@ -279,7 +301,7 @@ class UserThread extends Thread{
         sendMessage("\nOptions " + quiz.options[questionsNumber]);
         int answer = dis.readInt();
         dos.writeUTF(String.valueOf(quiz.correctAnswers[questionsNumber]));
-        sleep(5000);
+        sleep(1000);
         if(answer==quiz.correctAnswers[questionsNumber]){
             score++;
         }
