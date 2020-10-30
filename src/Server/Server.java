@@ -115,10 +115,7 @@ class UserThread extends Thread{
             if(server.startTheGame){
                 break;
             }
-            server.sendAll("\n" + getUserName() + ": " + message);
-            }
-
-
+            server.sendAll("\n" + getUserName() + ": " + message);}
             // CHAT LOOP - >
             while(true) {
 
@@ -158,7 +155,6 @@ class UserThread extends Thread{
                     server.sendAll("\n" + name + "'s score is " + score);
                     break;
                 }
-
             }
 
         } catch (Exception e) {
