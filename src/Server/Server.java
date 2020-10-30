@@ -250,25 +250,6 @@ class UserThread extends Thread{
         }
     }
 
-//METHOD FOR SORTING USERS BY SCORE
-    public void sortUserByScore () {
-
-        int topScore[] = ;
-        int size = topScore.length;
-
-        for (int i = 0 ;i< size-1; i++){
-            int min = i;
-
-            for (int j = i+1; j<size; j++){
-                if (topScore[j] < topScore[min]){
-                    min = j;
-                }
-            }
-            int temp = topScore[min];
-            topScore[min] = topScore[i];
-            topScore[i] = temp;
-        }
-    }
 
 }
 
