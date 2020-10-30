@@ -74,17 +74,22 @@ public class Server {
             topScore[min] = topScore[i];
             topScore[i] = temp;
         }
+        return done;
     }
 
 
 
 
-
-    public void sendAllBool(Boolean b){
-        for(UserThread userThread : users){
-            userThread.sendBool(b);
+    public boolean allDone(){
+        boolean done = true;
+        for(int i = 0; i<users.size(); i++){
+            if(!users.get(i).done){
+                done=false;
+            }
         }
     }
+
+
 
     public ArrayList<UserThread> getUsers() {
         return users;
@@ -107,7 +112,8 @@ class UserThread extends Thread{
     private Quiz quiz;
     String name;
     int score;
-    boolean[] question = {true,false,false,false};
+    boolean[] question = {true,false,false,false, false};
+    boolean done = false;
 
     public UserThread(Server server, Socket s, Quiz quiz) {
         this.s = s;
@@ -130,13 +136,16 @@ class UserThread extends Thread{
 
             // LOBBY LOOP - >
             while (true) {
+            String message = null;
             if(server.startTheGame){
                 break;
             }
-            String message = readMessage();
+            else{
+            message = readMessage();}
             if(message.equalsIgnoreCase("STARTTHEGAME")){
                 server.startTheGame=true;
                 server.sendAll("STARTTHEGAME");
+                break;
             }
             if(server.startTheGame){
                 break;
@@ -177,12 +186,19 @@ class UserThread extends Thread{
                     question[4] = false;
                 }
 
-                if(true){
-                    server.sendAll("\n" + name + "'s score is " + score);
+                done = true;
+                sendMessage("STOPTHEGAME");
+                break;
+
+            }
+
+            // WAITING LOOP
+            while(true){
+                if(server.allDone()){
+                    sendMessage("SHOWTHESCORE");
                     break;
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
