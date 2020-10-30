@@ -112,6 +112,9 @@ class UserThread extends Thread{
                 server.startTheGame=true;
                 server.sendAll("STARTTHEGAME");
             }
+            if(server.startTheGame){
+                break;
+            }
             server.sendAll("\n" + getUserName() + ": " + message);
             }
 
@@ -149,10 +152,9 @@ class UserThread extends Thread{
                 if (question[4]) {
                     sendQuestion(quiz, 4);
                     question[4] = false;
-                    allAnswered=true;
                 }
 
-                if(allAnswered){
+                if(true){
                     server.sendAll("\n" + name + "'s score is " + score);
                     break;
                 }
