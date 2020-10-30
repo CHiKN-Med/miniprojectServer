@@ -53,6 +53,19 @@ public class Server {
         }
     }
 
+    public void checkWinner() throws IOException {
+        String username = null;
+        int highscore = 0;
+        for (int i = 0; i < users.size(); i++) {
+            if(users.get(i).getScore() > highscore){
+                highscore = users.get(i).getScore();
+                username = users.get(i).getUserName();
+            }
+        }
+
+        sendAll(username + " won, with the score: " + highscore);
+    }
+
 
     public void score() {
         topScore = new int[users.size()];
@@ -200,6 +213,9 @@ class UserThread extends Thread{
                     break;
                 }
             }
+
+            server.checkWinner();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
