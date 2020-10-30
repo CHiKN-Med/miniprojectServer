@@ -1,19 +1,21 @@
 package Server;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Server {
     ArrayList<UserThread> users;
+    int[] topScore;
     private ServerSocket serverSocket;
     private int port;
     Quiz quiz = new Quiz();
     boolean startTheGame = false;
 
 
-    public Server(){
+    public Server() {
         port = 8000;
         users = new ArrayList<>();
     }
@@ -24,7 +26,7 @@ public class Server {
     }
 
 
-    public void initiateServer(){
+    public void initiateServer() {
         try {
             // Create a server socket
             serverSocket = new ServerSocket(port);
@@ -40,18 +42,42 @@ public class Server {
                 // ta.appendText("\n" + users.size());
                 //});
             }
-        }
-
-        catch(IOException ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
     public void sendAll(String message) throws IOException {
-        for(int i = 0; i<users.size(); i++){
+        for (int i = 0; i < users.size(); i++) {
             users.get(i).sendMessage(message);
         }
     }
+
+
+    public void score() {
+        topScore = new int[users.size()];
+
+        for (int i = 0; i < users.size(); i++) {
+            topScore[i] = (users.get(i).getScore());
+        }
+        int size = topScore.length;
+
+        for (int i = 0 ;i< size-1; i++){
+            int min = i;
+
+            for (int j = i+1; j<size; j++){
+                if (topScore[j] < topScore[min]){
+                    min = j;
+                }
+            }
+            int temp = topScore[min];
+            topScore[min] = topScore[i];
+            topScore[i] = temp;
+        }
+    }
+
+
+
 
 
     public void sendAllBool(Boolean b){
@@ -224,7 +250,25 @@ class UserThread extends Thread{
         }
     }
 
+//METHOD FOR SORTING USERS BY SCORE
+    public void sortUserByScore () {
 
+        int topScore[] = ;
+        int size = topScore.length;
+
+        for (int i = 0 ;i< size-1; i++){
+            int min = i;
+
+            for (int j = i+1; j<size; j++){
+                if (topScore[j] < topScore[min]){
+                    min = j;
+                }
+            }
+            int temp = topScore[min];
+            topScore[min] = topScore[i];
+            topScore[i] = temp;
+        }
+    }
 
 }
 
