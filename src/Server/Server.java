@@ -40,8 +40,8 @@ public class Server {
                 // ta.appendText("\n" + users.size());
                 //});
             }
-
         }
+
         catch(IOException ex) {
             ex.printStackTrace();
         }
@@ -53,19 +53,6 @@ public class Server {
         }
     }
 
-    public boolean allAnswered(){
-        boolean done = true;
-        for(UserThread userThread : users)
-            if (!userThread.haveAnswered) {
-                done = false;
-            }
-        if(done==true){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
 
     public void sendAllBool(Boolean b){
         for(UserThread userThread : users){
@@ -95,7 +82,6 @@ class UserThread extends Thread{
     String name;
     int score;
     boolean[] question = {true,false,false,false};
-    boolean haveAnswered = false;
 
     public UserThread(Server server, Socket s, Quiz quiz) {
         this.s = s;
@@ -114,19 +100,23 @@ class UserThread extends Thread{
             String username = readMessage();
             setUserName(username);
             server.sendAll("\nNew user joined: " + name);
-            while (true) {
-            String message = readMessage();
-                if(message.equalsIgnoreCase("STARTTHEGAME")){
-                    server.startTheGame=true;
-                    server.sendAll("STARTTHEGAME");
-                }
-                if(server.startTheGame){
-                    break;
-                }
+            boolean allAnswered = false;
 
+            // LOBBY LOOP - >
+            while (true) {
+            if(server.startTheGame){
+                break;
+            }
+            String message = readMessage();
+            if(message.equalsIgnoreCase("STARTTHEGAME")){
+                server.startTheGame=true;
+                server.sendAll("STARTTHEGAME");
+            }
             server.sendAll("\n" + getUserName() + ": " + message);
             }
 
+
+            // CHAT LOOP - >
             while(true) {
 
                 if (question[0]) {
@@ -159,11 +149,14 @@ class UserThread extends Thread{
                 if (question[4]) {
                     sendQuestion(quiz, 4);
                     question[4] = false;
+                    allAnswered=true;
                 }
 
+                if(allAnswered){
+                    server.sendAll("\n" + name + "'s score is " + score);
+                    break;
+                }
 
-                server.sendAll("\n" + name + "'s score is " + score);
-                break;
             }
 
         } catch (Exception e) {
@@ -201,15 +194,7 @@ class UserThread extends Thread{
         return dis.readUTF();
     }
 
-    public int readInt(){
-        int m = 0;
-        try {
-            m = dis.readInt();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return m;
-    }
+
 
     public boolean readBool(){
         boolean b = false;
@@ -230,15 +215,14 @@ class UserThread extends Thread{
         }
     }
 
-    public void sendQuestion(Quiz quiz, int questionsNumber) throws IOException {
-        sendMessage("\nQuestion: " + quiz.questions[questionsNumber] + "\n" + quiz.options[questionsNumber]);
-        int answer = readInt();
+    public void sendQuestion(Quiz quiz, int questionsNumber) throws IOException, InterruptedException {
+        sendMessage("\nQuestion: " + quiz.questions[questionsNumber]);
+        sendMessage("\nOptions " + quiz.options[questionsNumber]);
+        int answer = dis.readInt();
+        dos.writeUTF(String.valueOf(quiz.correctAnswers[questionsNumber]));
+        sleep(5000);
         if(answer==quiz.correctAnswers[questionsNumber]){
-            sendMessage("\nCORRECT");
             score++;
-        }
-        else{
-            sendMessage("\nWRONG");
         }
     }
 
