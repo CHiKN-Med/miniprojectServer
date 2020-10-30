@@ -117,11 +117,16 @@ class UserThread extends Thread{
             while (true) {
             String message = readMessage();
                 if(message.equalsIgnoreCase("STARTTHEGAME")){
+                    server.startTheGame=true;
                     server.sendAll("STARTTHEGAME");
+                }
+                if(server.startTheGame){
                     break;
                 }
+
             server.sendAll("\n" + getUserName() + ": " + message);
             }
+
             while(true) {
 
                 if (question[0]) {
@@ -157,7 +162,7 @@ class UserThread extends Thread{
                 }
 
 
-                sendMessage("\n" + name + "'s score is " + score);
+                server.sendAll("\n" + name + "'s score is " + score);
                 break;
             }
 
