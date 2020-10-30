@@ -54,16 +54,18 @@ public class Server {
     }
 
     public void checkWinner() throws IOException {
-        String username = null;
+        String username = "";
         int highscore = 0;
+        String scoreboard = null;
         for (int i = 0; i < users.size(); i++) {
+            scoreboard+="\n" + users.get(i).getUserName() + ": " + users.get(i).getScore();
             if(users.get(i).getScore() > highscore){
                 highscore = users.get(i).getScore();
                 username = users.get(i).getUserName();
             }
         }
-
-        sendAll(username + " won, with the score: " + highscore);
+        sendAll(username);
+        sendAll(scoreboard);
     }
 
 
