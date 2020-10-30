@@ -1,12 +1,9 @@
-
-//_____________________________________________________________________________________________________________________
-
 package Server;
 
-        import java.io.*;
-        import java.net.*;
-        import java.util.ArrayList;
-        import java.util.Date;
+import java.io.*;
+import java.net.*;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class Server {
     ArrayList<UserThread> users;
@@ -48,13 +45,11 @@ public class Server {
         catch(IOException ex) {
             ex.printStackTrace();
         }
-
-
     }
 
-    public void sendAll(String message){
-        for(UserThread userThread : users){
-            userThread.sendMessage(message);
+    public void sendAll(String message) throws IOException {
+        for(int i = 0; i<users.size(); i++){
+            users.get(i).sendMessage(message);
         }
     }
 
@@ -109,7 +104,6 @@ class UserThread extends Thread{
         this.quiz = quiz;
     }
 
-
     @Override
     public void run()
     {
@@ -117,79 +111,65 @@ class UserThread extends Thread{
             dis = new DataInputStream(s.getInputStream());
             dos = new DataOutputStream(s.getOutputStream());
             System.out.println("\nThread has started");
-            setUserName(readMessage());
+            String username = readMessage();
+            setUserName(username);
             server.sendAll("\nNew user joined: " + name);
             while (true) {
-                String clientMessage = readMessage();
-                if(clientMessage.equals("STARTTHEGAME")){
-                    server.startTheGame=true;
-                }
-                if(server.startTheGame){
+            String message = readMessage();
+                if(message.equalsIgnoreCase("STARTTHEGAME")){
                     server.sendAll("STARTTHEGAME");
                     break;
                 }
-                server.sendAll("\n" + getUserName() + ": " + clientMessage);
+            server.sendAll("\n" + getUserName() + ": " + message);
             }
-
             while(true) {
 
                 if (question[0]) {
                     sendQuestion(quiz, 0);
                     question[0] = false;
-                }
-
-                if (server.allAnswered()) {
                     question[1] = true;
-                    haveAnswered = false;
                 }
 
                 if (question[1]) {
                     sendQuestion(quiz, 1);
                     question[1] = false;
+                    question[2] = true;
                 }
 
-                if (server.allAnswered()) {
-                    question[2] = true;
-                    haveAnswered = false;
-                }
 
                 if (question[2]) {
                     sendQuestion(quiz, 2);
                     question[2] = false;
+                    question[3] = true;
                 }
 
-                if (server.allAnswered()) {
-                    question[3] = true;
-                    haveAnswered = false;
-                }
 
                 if (question[3]) {
                     sendQuestion(quiz, 3);
                     question[3] = false;
+                    question[4] = true;
                 }
 
-                if (server.allAnswered()) {
-                    question[4] = true;
-                    haveAnswered = false;
-                }
 
                 if (question[4]) {
                     sendQuestion(quiz, 4);
                     question[4] = false;
                 }
 
-                if (server.allAnswered()) {
-                    server.sendAll("\n" + name + "'s score is " + score);
-                    break;
-                }
 
-
+                sendMessage("\n" + name + "'s score is " + score);
+                break;
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
+
+
+
 
     int getScore(){
         return score;
@@ -207,23 +187,13 @@ class UserThread extends Thread{
         this.name=name;
     }
 
-    public void sendMessage(String m){
-        try {
+    public void sendMessage(String m) throws IOException {
             dos.writeUTF(m);
             dos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
-    public String readMessage(){
-        String m = null;
-        try {
-            m = dis.readUTF();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return m;
+    public String readMessage() throws IOException {
+        return dis.readUTF();
     }
 
     public int readInt(){
@@ -255,9 +225,8 @@ class UserThread extends Thread{
         }
     }
 
-    public void sendQuestion(Quiz quiz, int questionsNumber){
+    public void sendQuestion(Quiz quiz, int questionsNumber) throws IOException {
         sendMessage("\nQuestion: " + quiz.questions[questionsNumber] + "\n" + quiz.options[questionsNumber]);
-        haveAnswered=readBool();
         int answer = readInt();
         if(answer==quiz.correctAnswers[questionsNumber]){
             sendMessage("\nCORRECT");
