@@ -74,7 +74,7 @@ public class Server {
             topScore[min] = topScore[i];
             topScore[i] = temp;
         }
-        return done;
+
     }
 
 
@@ -87,6 +87,7 @@ public class Server {
                 done=false;
             }
         }
+        return done;
     }
 
 
