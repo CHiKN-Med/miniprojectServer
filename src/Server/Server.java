@@ -8,9 +8,7 @@ import java.util.Date;
 
 public class Server {
     ArrayList<UserThread> users;
-    int[] topScore;
-    private ServerSocket serverSocket;
-    private int port;
+    private final int port;
     Quiz quiz = new Quiz();
     boolean startTheGame = false;
 
@@ -30,93 +28,48 @@ public class Server {
 
     public void initiateServer() {
         try {
-            // Create a server socket
-            serverSocket = new ServerSocket(port);
-
-            new Thread(() -> {
-                while (true){
-                    try {
-                        // System.out.println(allDone());
-                        if(allDone()){
-                            checkWinner();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }).start();
-
+            ServerSocket serverSocket = new ServerSocket(port);
             System.out.println("Server started at " + new Date() + "\n");
             while (true) {
                 // Listen for a connection request
                 Socket socket = serverSocket.accept();
-                // Create data input and output streams
+                // create userThread when client connects
                 UserThread user = new UserThread(this, socket, quiz);
                 users.add(user);
                 user.start();
-                // ta.appendText("\n" + users.size());
-                //});
-
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
-    public void sendAll(String message) throws IOException {
+    public synchronized void sendAll(String message) throws IOException {
         for (int i = 0; i < users.size(); i++) {
             users.get(i).sendMessage(message);
         }
     }
 
-    public void checkWinner() throws IOException, InterruptedException {
-        String username = null;
+        public void checkWinner(UserThread thisUser) throws IOException, InterruptedException {
+        String theWinner = null;
         int highscore = 0;
-        String scoreboard = "";
+        StringBuilder scoreboard = new StringBuilder();
+
+        // Running through all the users and creating a scoreboard string. Also checking who has the highest score
         for (int i = 0; i < users.size(); i++) {
-            scoreboard+="\n" + users.get(i).getUserName() + ": " + users.get(i).getScore();
-            if(users.get(i).getScore() > highscore){
-                highscore = users.get(i).getScore();
-                username = users.get(i).getUserName();
+            if(users.get(i).getScore() > highscore)
+            {
+                theWinner = users.get(i).getUserName();
             }
+            scoreboard.append(users.get(i).getUserName()).append(": ").append(users.get(i).getScore()).append("\n");
         }
-        sendAll(username);
-        sendAll(scoreboard);
-    }
 
-
-
-
-    public void score() {
-        topScore = new int[users.size()];
-
-        for (int i = 0; i < users.size(); i++) {
-            topScore[i] = (users.get(i).getScore());
-        }
-        int size = topScore.length;
-
-        for (int i = 0 ;i< size-1; i++){
-            int min = i;
-
-            for (int j = i+1; j<size; j++){
-                if (topScore[j] < topScore[min]){
-                    min = j;
-                }
-            }
-            int temp = topScore[min];
-            topScore[min] = topScore[i];
-            topScore[i] = temp;
-        }
+        // sending all of this back to only the current users client
+        thisUser.sendMessage(theWinner);
+        thisUser.sendMessage(scoreboard.toString());
 
     }
 
-
-
-
-    public boolean allDone() throws IOException, InterruptedException {
+    public synchronized boolean allDone() throws IOException, InterruptedException {
         boolean done = true;
         for(int i = 0; i<users.size(); i++){
             if(!users.get(i).done){
@@ -149,7 +102,7 @@ class UserThread extends Thread{
     private Quiz quiz;
     String name;
     int score;
-    boolean[] question = {true,false,false,false, false};
+    boolean[] question = {true,false,false,false,false};
     boolean done = false;
 
     public UserThread(Server server, Socket s, Quiz quiz) {
@@ -169,26 +122,26 @@ class UserThread extends Thread{
             String username = readMessage();
             setUserName(username);
             server.sendAll("\nNew user joined: " + name);
-            boolean allAnswered = false;
 
             // LOBBY LOOP - >
             while (true) {
-            String message = null;
+            String clientMessage = readMessage();
+
+            if(clientMessage.equalsIgnoreCase("STARTTHEGAME")){
+            server.startTheGame=true;
+            server.sendAll("STARTTHEGAME");
+            break;
+            }
+
             if(server.startTheGame){
-                break;
+            break;
             }
-            else{
-            message = readMessage();}
-            if(message.equalsIgnoreCase("STARTTHEGAME")){
-                server.startTheGame=true;
-                server.sendAll("STARTTHEGAME");
-                break;
+
+            server.sendAll("\n" + getUserName() + ": " + clientMessage);
+
             }
-            if(server.startTheGame){
-                break;
-            }
-            server.sendAll("\n" + getUserName() + ": " + message);}
-            // CHAT LOOP - >
+
+            // QUIZ LOOP - >
             while(true) {
 
                 if (question[0]) {
@@ -237,6 +190,8 @@ class UserThread extends Thread{
                 }
             }
 
+            server.checkWinner(this);
+
 
 
         } catch (Exception e) {
@@ -276,35 +231,17 @@ class UserThread extends Thread{
     }
 
 
-
-    public boolean readBool(){
-        boolean b = false;
-        try {
-            b = dis.readBoolean();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return b;
-    }
-
-    public void sendBool(Boolean b){
-        try {
-            dos.writeBoolean(b);
-            dos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void sendQuestion(Quiz quiz, int questionsNumber) throws IOException, InterruptedException {
         sendMessage("\nQuestion: " + quiz.questions[questionsNumber]);
         sendMessage("\nOptions " + quiz.options[questionsNumber]);
         int answer = dis.readInt();
+        if(answer==quiz.correctAnswers[questionsNumber])
+        {
+            score+=1;
+        }
+        System.out.println(getUserName() + ": " + getScore());
         dos.writeUTF(String.valueOf(quiz.correctAnswers[questionsNumber]));
         sleep(1000);
-        if(answer==quiz.correctAnswers[questionsNumber]){
-            score++;
-        }
     }
 
 
