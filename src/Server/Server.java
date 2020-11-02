@@ -36,12 +36,19 @@ public class Server {
                 // Listen for a connection request
                 Socket socket = serverSocket.accept();
                 // Create data input and output streams
-                UserThread user = new UserThread(this, socket, quiz);
-                users.add(user);
-                user.start();
+                if(!startTheGame) {
+                    UserThread user = new UserThread(this, socket, quiz);
+                    users.add(user);
+                    user.start();
+                }
+                else{
+                    System.out.println(" Unable to connect. A game is currently active.");
+                }
+                }
+
                 // ta.appendText("\n" + users.size());
                 //});
-            }
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -74,7 +81,6 @@ public class Server {
             int temp = topScore[min];
             topScore[min] = topScore[i];
             topScore[i] = temp;
-
 
         }
     }
