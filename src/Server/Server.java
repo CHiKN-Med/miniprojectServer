@@ -297,8 +297,8 @@ class UserThread extends Thread{
     }
 
     public void sendQuestion(Quiz quiz, int questionsNumber) throws IOException, InterruptedException {
-        sendMessage("\nQuestion: " + quiz.questions[questionsNumber]);
-        sendMessage("\nOptions " + quiz.options[questionsNumber]);
+        sendMessage(quiz.questions[questionsNumber]);
+        sendMessage(quiz.options[questionsNumber]);
         int answer = dis.readInt();
         dos.writeUTF(String.valueOf(quiz.correctAnswers[questionsNumber]));
         sleep(1000);
