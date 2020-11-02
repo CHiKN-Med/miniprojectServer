@@ -28,16 +28,27 @@ public class Server {
 
     public void initiateServer() {
         try {
+            // Create a server socket
             ServerSocket serverSocket = new ServerSocket(port);
+
             System.out.println("Server started at " + new Date() + "\n");
             while (true) {
                 // Listen for a connection request
                 Socket socket = serverSocket.accept();
-                // create userThread when client connects
-                UserThread user = new UserThread(this, socket, quiz);
-                users.add(user);
-                user.start();
+                // Create data input and output streams
+                if(!startTheGame) {
+                    UserThread user = new UserThread(this, socket, quiz);
+                    users.add(user);
+                    user.start();
+                }
+                else{
+                    System.out.println(" Unable to connect. A game is currently active.");
+                }
             }
+
+            // ta.appendText("\n" + users.size());
+            //});
+
         } catch (IOException ex) {
             ex.printStackTrace();
         }
