@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Server {
+    String hej = "hej";
     ArrayList<UserThread> users;
     private final int port;
     Quiz quiz = new Quiz();
@@ -42,7 +43,7 @@ public class Server {
                     user.start();
                 }
                 else{
-                    System.out.println(" Unable to connect. A game is currently active.");
+                    System.out.println("Unable to connect. A game is currently active.");
                 }
             }
 
