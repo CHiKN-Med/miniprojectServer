@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Server {
-    String hej = "hej";
+    String hej = null;
     ArrayList<UserThread> users;
     private final int port;
     Quiz quiz = new Quiz();
