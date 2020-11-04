@@ -107,7 +107,7 @@ class UserThread extends Thread{
     private Quiz quiz;
     String name;
     int score;
-    boolean[] question = {true,false,false,false,false};
+    boolean[] question = {true,false,false,false,false,false,false,false,false,false,false};
     boolean done = false;
 
     public UserThread(Server server, Socket s, Quiz quiz) {
@@ -179,6 +179,37 @@ class UserThread extends Thread{
                 if (question[4]) {
                     sendQuestion(quiz, 4);
                     question[4] = false;
+                    question[5] = true;
+                }
+                if (question[5]) {
+                    sendQuestion(quiz, 5);
+                    question[5] = false;
+                    question[6] = true;
+                }
+                if (question[6]) {
+                    sendQuestion(quiz, 6);
+                    question[6] = false;
+                    question[7] = true;
+                }
+                if (question[7]) {
+                    sendQuestion(quiz, 7);
+                    question[7] = false;
+                    question[8] = true;
+                }
+                if (question[8]) {
+                    sendQuestion(quiz, 8);
+                    question[8] = false;
+                    question[9] = true;
+                }
+                if (question[9]) {
+                    sendQuestion(quiz, 9);
+                    question[9] = false;
+                    question[10] = true;
+                }
+
+                if (question[10]) {
+                    sendQuestion(quiz, 10);
+                    question[10] = false;
                 }
 
                 done = true;
