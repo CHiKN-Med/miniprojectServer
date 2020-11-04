@@ -146,13 +146,7 @@ class UserThread extends Thread{
 
             // QUIZ LOOP - >
             while(true) {
-
-                for(int i = 0; i<quiz.questions.length; i++){
-                    sendQuestion(quiz, i);
-                }
-
-                done = true;
-                sendMessage("STOPTHEGAME");
+                showQuestions();
                 break;
 
             }
@@ -184,6 +178,13 @@ class UserThread extends Thread{
         return score;
     }
 
+    void showQuestions() throws IOException, InterruptedException {
+        for(int i = 0; i<quiz.questions.length; i++){
+            sendQuestion(quiz, i);
+        }
+        done = true;
+        sendMessage("STOPTHEGAME");
+    }
 
     String getUserName(){
         return name;
