@@ -127,24 +127,7 @@ class UserThread extends Thread{
             String username = readMessage();
             setUserName(username);
             server.sendAll("\nNew user joined: " + name);
-
-            // LOBBY LOOP - >
-            while (true) {
-            String clientMessage = readMessage();
-
-            if(clientMessage.equalsIgnoreCase("STARTTHEGAME")){
-            server.startTheGame=true;
-            server.sendAll("STARTTHEGAME");
-            break;
-            }
-
-            if(server.startTheGame){
-            break;
-            }
-
-            server.sendAll("\n" + getUserName() + ": " + clientMessage);
-
-            }
+            lobbyLoop();
 
             // QUIZ LOOP - >
             while(true) {
@@ -237,10 +220,6 @@ class UserThread extends Thread{
 
 
 
-
-
-
-
     int getScore(){
         return score;
     }
@@ -277,6 +256,27 @@ class UserThread extends Thread{
         sleep(1000);
     }
 
+
+    // LOBBY LOOP
+    public void lobbyLoop() throws IOException {
+
+        while (true) {
+            String clientMessage = readMessage();
+
+            if (clientMessage.equalsIgnoreCase("STARTTHEGAME")) {
+                server.startTheGame = true;
+                server.sendAll("STARTTHEGAME");
+                break;
+            }
+
+            if (server.startTheGame) {
+                break;
+            }
+
+            server.sendAll("\n" + getUserName() + ": " + clientMessage);
+
+        }
+    }
 
 }
 
