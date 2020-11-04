@@ -137,11 +137,12 @@ class UserThread extends Thread{
             // WAITING LOOP
             while(true){
                 if(server.allDone()){
-                    sendMessage("SHOWTHESCORE");
-                    break;
+                sendMessage("SHOWTHESCORE");
+                break;
                 }
             }
 
+            // winner loop
             server.checkWinner(this);
 
 
