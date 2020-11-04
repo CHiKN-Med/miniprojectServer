@@ -47,8 +47,7 @@ public class Server {
                 }
             }
 
-            // ta.appendText("\n" + users.size());
-            //});
+
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -89,12 +88,6 @@ public class Server {
             }
         }
         return done;
-    }
-
-
-
-    public ArrayList<UserThread> getUsers() {
-        return users;
     }
 
 
@@ -221,9 +214,6 @@ class UserThread extends Thread{
         return score;
     }
 
-    void setScore(int score){
-        this.score=score;
-    }
 
     String getUserName(){
         return name;
