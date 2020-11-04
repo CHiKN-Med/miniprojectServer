@@ -4,6 +4,8 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.net.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 
 public class Server {
@@ -160,11 +162,14 @@ class UserThread extends Thread{
 
     void showQuestions() throws IOException, InterruptedException {
         for(int i = 0; i<quiz.questions.length; i++){
-            sendQuestion(quiz, i);
+            Integer[] numbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+            Collections.shuffle(Arrays.asList(numbers));
+            sendQuestion(quiz, numbers[i]);
         }
         done = true;
         sendMessage("STOPTHEGAME");
     }
+
 
     String getUserName(){
         return name;
