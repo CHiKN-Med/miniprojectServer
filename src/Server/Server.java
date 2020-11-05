@@ -161,9 +161,9 @@ class UserThread extends Thread{
     }
 
     void showQuestions() throws IOException, InterruptedException {
+        Integer[] numbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        Collections.shuffle(Arrays.asList(numbers));
         for(int i = 0; i<quiz.questions.length; i++){
-            Integer[] numbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-            Collections.shuffle(Arrays.asList(numbers));
             sendQuestion(quiz, numbers[i]);
         }
         done = true;
