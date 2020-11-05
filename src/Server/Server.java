@@ -33,10 +33,13 @@ public class Server {
             // Create a server socket
             ServerSocket serverSocket = new ServerSocket(port);
 
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            System.out.println(inetAddress.getHostAddress());
             System.out.println("Server started at " + new Date() + "\n");
             while (true) {
                 // Listen for a connection request
                 Socket socket = serverSocket.accept();
+
                 // Create data input and output streams
                 if(!startTheGame) {
                     UserThread user = new UserThread(this, socket, quiz);
