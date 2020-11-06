@@ -4,7 +4,7 @@ package Server;
 
 public class Quiz {
 //THE
-    String[] questions = {"What is the biggest lake in the world?",
+    public String[] questions = {"What is the biggest lake in the world?",
             "Who wrote the hit 'Ice Ice Baby' from 1989?",
             "What is the world's biggest land predator?",
             "What is the highest free fall a human has survived without parachute?",
@@ -15,7 +15,7 @@ public class Quiz {
             "What country has the most vending machines per capita?",
             "Who is the highest paid athlete in the world?",
             "What is the highest-grossing computer animated film?"};
-    String[] options = {"1) Lake Michigan  \n\n2) The Caspian Sea \n\n3) Victoria Lake, \n\n4)Furesø",
+    public String[] options = {"1) Lake Michigan  \n\n2) The Caspian Sea \n\n3) Victoria Lake, \n\n4)Furesø",
             "1) Ice Cube \n\n2) Ice T \n\n3) Vanilla Ice \n\n4) Coldplay",
             "1) Polar Bear \n\n2) Lion \n\n3) Bengal Tiger \n\n4) Pug",
             "1) 32m \n\n2) 55m \n\n3) 93.8m \n\n4) over 10.000m",
@@ -27,6 +27,6 @@ public class Quiz {
             "1) Lebron James \n\n2) Tiger Woods \n\n3) Cristiano Ronaldo \n\n4) Roger Federer",
             "1) The Lion King (2019) \n\n2) Frozen \n\n3) Toy Story 4 \n\n4) Despicable Me 3"};
 
-    int[] correctAnswers = {2,3,1,4,3,3,1,2,3,4,1};
+    public int[] correctAnswers = {2,3,1,4,3,3,1,2,3,4,1};
 
 }
