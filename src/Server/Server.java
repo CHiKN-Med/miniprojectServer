@@ -23,10 +23,7 @@ public class Server {
     public static void main(String[] args) {
         Server server = new Server();
         server.initiateServer();
-
     }
-
-
 
     public void initiateServer() {
         try {
@@ -41,13 +38,15 @@ public class Server {
                 Socket socket = serverSocket.accept();
 
                 // Create data input and output streams
-                if(!startTheGame) {
+                if(!startTheGame)
+                {
                     UserThread user = new UserThread(this, socket, quiz);
                     users.add(user);
                     user.start();
                 }
+
                 else{
-                    System.out.println("Unable to connect. A game is currently active.");
+                    System.out.println("User tried to connect, but a game is already active");
                 }
             }
 
@@ -64,23 +63,25 @@ public class Server {
         }
     }
 
-        public void checkWinner(UserThread thisUser) throws IOException, InterruptedException {
-        String theWinner = null;
-        int highscore = 0;
-        StringBuilder scoreboard = new StringBuilder();
+    public void checkWinner(UserThread thisUser) throws IOException {
+    String theWinner = null;
+    int highscore = 0;
+    StringBuilder scoreboard = new StringBuilder();
 
-        // Running through all the users and creating a scoreboard string. Also checking who has the highest score
-        for (int i = 0; i < users.size(); i++) {
-            if(users.get(i).getScore() > highscore)
-            {
-                theWinner = users.get(i).getUserName();
-            }
-            scoreboard.append(users.get(i).getUserName()).append(": ").append(users.get(i).getScore()).append("\n");
+    // Running through all the users and creating a scoreboard string. Also checking who has the highest score
+    for (int i = 0; i < users.size(); i++) {
+        if(users.get(i).getScore() > highscore)
+        {
+            highscore=users.get(i).getScore();
+            theWinner=users.get(i).getUserName();
+
         }
+        scoreboard.append(users.get(i).getUserName()).append(": ").append(users.get(i).getScore()).append("\n");
+    }
 
-        // sending all of this back to only the current users client
-        thisUser.sendMessage(theWinner);
-        thisUser.sendMessage(scoreboard.toString());
+    // sending all of this back to only the current users client
+    thisUser.sendMessage(theWinner);
+    thisUser.sendMessage(scoreboard.toString());
 
     }
 
@@ -94,21 +95,14 @@ public class Server {
         return done;
     }
 
-
-
-    /**
-     * The main method is only needed for the IDE with limited
-     * JavaFX support. Not needed for running from the command line.
-     */
-
 }
 
 class UserThread extends Thread{
     private DataInputStream dis;
     private DataOutputStream dos;
-    private Socket s;
-    private Server server;
-    private Quiz quiz;
+    private final Socket s;
+    private final Server server;
+    private final Quiz quiz;
     String name;
     int score;
     boolean done = false;
@@ -130,14 +124,12 @@ class UserThread extends Thread{
             String username = readMessage();
             setUserName(username);
             server.sendAll("\nNew user joined: " + name);
+
+            //Lobby loop
             lobbyLoop();
 
-            // QUIZ LOOP - >
-            while(true) {
-                showQuestions();
-                break;
-
-            }
+            //QUIZ
+            showQuestions();
 
             // WAITING LOOP
             while(true){
@@ -147,7 +139,7 @@ class UserThread extends Thread{
                 }
             }
 
-            // winner loop
+            // CHECKING WINNER
             server.checkWinner(this);
 
 
@@ -226,6 +218,5 @@ class UserThread extends Thread{
 
         }
     }
-
 }
 
