@@ -1,7 +1,6 @@
 package Server;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +26,7 @@ public class Server {
         server.initiateServer();
     }
 
-    // initiate funtion
+    // initiate function
     public void initiateServer() {
         try {
             // Create a serverSocket with the port number 8000
@@ -48,7 +47,7 @@ public class Server {
                 {
                     UserThread user = new UserThread(this, socket, quiz);
                     users.add(user);
-                    user.start(); // starting the UserThread (intitializing its run() function)
+                    user.start(); // starting the UserThread (initializing its run() function)
                 }
                 else{
                     System.out.println("User tried to connect, but a game is already active");
@@ -62,7 +61,7 @@ public class Server {
         }
     }
 
-    // a functio  using the DataOutputStream from each user in the array in order to send a message to all Clients.
+    // a function  using the DataOutputStream from each user in the array in order to send a message to all Clients.
     public synchronized void sendAll(String message) throws IOException {
         for (int i = 0; i < users.size(); i++) {
             users.get(i).sendMessage(message);
@@ -127,7 +126,7 @@ class UserThread extends Thread{
         this.quiz = quiz;
     }
 
-    // the run fucntion which is initialized using .start() in the initiate function in the server
+    // the run function which is initialized using .start() in the initiate function in the server
     @Override
     public void run()
     {
@@ -169,7 +168,8 @@ class UserThread extends Thread{
 
 
 
-
+    // for-loop going through all questions and sending them to the user by using th sendquestion function.
+    // when all questions is send the user is set to be done.
     public void showQuestions() throws IOException, InterruptedException {
         Integer[] numbers = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         Collections.shuffle(Arrays.asList(numbers));
@@ -180,17 +180,18 @@ class UserThread extends Thread{
         sendMessage("STOPTHEGAME");
     }
 
-
+    // Using the DataOutputStream to send a message to the client
     public void sendMessage(String m) throws IOException {
             dos.writeUTF(m);
             dos.flush();
     }
 
+    // reading a message from a client
     public String readMessage() throws IOException {
         return dis.readUTF();
     }
 
-
+    // a function that sends a question, then the options and lastly it reads an int form the client and afterwards sends the right correct answer.
     public void sendQuestion(Quiz quiz, int questionsNumber) throws IOException, InterruptedException {
         sendMessage(quiz.questions[questionsNumber]);
         sendMessage(quiz.options[questionsNumber]);
